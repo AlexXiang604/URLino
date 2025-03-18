@@ -1,0 +1,13 @@
+runtime: java17
+entrypoint: java -jar target/urlshortener.jar
+service: urlshortener
+service_account: comp413@rice-comp-539-spring-2022.iam.gserviceaccount.com
+env_variables:
+  GOOGLE_APPLICATION_CREDENTIALS: rice-comp-539-spring-2022-423671897e9b.json
+
+spring:
+  cloud:
+    gcp:
+      bigtable:
+        project-id: rice-comp-539-spring-2022
+        instance-id: comp-539-bigtable
