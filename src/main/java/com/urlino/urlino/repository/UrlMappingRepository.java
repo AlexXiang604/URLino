@@ -56,4 +56,9 @@ public class UrlMappingRepository {
         RowCell cell = cells.get(0);
         return cell.getValue().toStringUtf8();
     }
+
+    public void deleteMapping(String id) {
+        RowMutation mutation = RowMutation.create(TABLE_ID, id).deleteRow();
+        Client.mutateRow(mutation);
+    }
 }
