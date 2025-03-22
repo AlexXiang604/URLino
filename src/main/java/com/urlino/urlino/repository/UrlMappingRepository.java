@@ -8,6 +8,7 @@ import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -18,14 +19,21 @@ public class UrlMappingRepository {
     private static final String TABLE_ID = "team4URLino";
     private static final String COLUMN_FAMILY = "Mapping";
 
-    private BigtableDataClient Client;
+    @Value("${spring.cloud.gcp.bigtable.project-id}")
+    private static String projectId;
 
-    public void BigtableManager(String projectId, String instanceId) throws IOException {
-        this.Client = BigtableDataClient.create(projectId, instanceId);
+    @Value("${spring.cloud.gcp.bigtable.instance-id}")
+    private static String instanceId;
+
+    private final BigtableDataClient Client;
+
+    @Autowired
+    public UrlMappingRepository(BigtableDataClient bigtableDataClient) {
+        this.Client = bigtableDataClient;
     }
 
     void close() {
-        this.Client.close();
+        Client.close();
     }
 
     public void saveMapping(UrlMapping urlMapping) {

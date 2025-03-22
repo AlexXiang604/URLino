@@ -2,9 +2,7 @@ package com.urlino.urlino.controller;
 
 import com.urlino.urlino.model.UrlMapping;
 import com.urlino.urlino.service.UrlShortenerService;
-import com.urlino.urlino.repository.UrlMappingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,19 +11,27 @@ public class UrlShortenerController {
 
     @Autowired
     private UrlShortenerService Service;
-    private UrlMappingRepository Repository;
 
-    @RequestMapping(value = "/{url}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity shortenUrl(@PathVariable String url) {
-        String shortUrlEntry = Service.shortenUrl(url);
-        return ResponseEntity.ok(url);
+    @PostMapping
+    public UrlMapping shortenUrl(@RequestBody String url){
+        return Service.shortenUrl(url);
     }
 
-    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity getUrl(@PathVariable String key) {
-        String url = Repository.findLongUrlById(key);
-        return ResponseEntity.ok(url);
+    @GetMapping("/{shorturl}")
+    public String getOriginlUrl(@PathVariable String shorturl) {
+        return Service.getLongUrl(shorturl);
     }
+//    @RequestMapping(value = "/{url}", method = RequestMethod.POST)
+//    @ResponseBody
+//    public ResponseEntity shortenUrl(@PathVariable String url) {
+//        String shortUrlEntry = Service.shortenUrl(url);
+//        return ResponseEntity.ok(shortUrlEntry);
+//    }
+
+//    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ResponseEntity getUrl(@PathVariable String key) {
+//        String url = Service.getLongUrl(key);
+//        return ResponseEntity.ok(url);
+//    }
 }
