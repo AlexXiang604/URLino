@@ -17,7 +17,12 @@ import java.util.Optional;
 
 
 @RequestMapping("/service")
-@CrossOrigin(origins = "http://localhost:8000")
+//@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(
+        origins = "http://localhost:8000",
+        allowedHeaders = {"Authorization", "Content-Type"},
+        methods = {RequestMethod.POST, RequestMethod.OPTIONS}
+)
 @RestController
 public class UrlMappingController {
 
