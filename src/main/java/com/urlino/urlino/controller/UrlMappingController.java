@@ -17,6 +17,7 @@ import java.util.Optional;
 
 
 @RequestMapping("/service")
+@CrossOrigin(origins = "http://localhost:8000")
 @RestController
 public class UrlMappingController {
 

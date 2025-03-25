@@ -14,9 +14,9 @@ import java.util.List;
 
 @Repository
 public class ReverseMappingRepository {
-    private static final String PROJECT_ID = "test-project";
-    private static final String INSTANCE_ID = "test-instance";
-    private static final String TABLE_NAME = "reverse_mapping";
+    private static final String PROJECT_ID = "rice-comp-539-spring-2022";
+    private static final String INSTANCE_ID = "comp-539-bigtable";
+    private static final String TABLE_NAME = "URLino_reverse_mapping";
 //    private static final String CF_INDEX = "index";
 //    private static final String COL_SHORT_URL = "short_url";
 
@@ -24,7 +24,8 @@ public class ReverseMappingRepository {
 
     public ReverseMappingRepository() throws IOException {
 //        dataClient = BigtableDataClient.create(PROJECT_ID, INSTANCE_ID);
-        BigtableDataSettings settings = BigtableDataSettings.newBuilderForEmulator(8086) // 使用本地 Emulator，端口 8086
+//        BigtableDataSettings settings = BigtableDataSettings.newBuilderForEmulator(8086) // 使用本地 Emulator，端口 8086
+        BigtableDataSettings settings = BigtableDataSettings.newBuilder()
                 .setProjectId(PROJECT_ID)
                 .setInstanceId(INSTANCE_ID)
                 .build();
