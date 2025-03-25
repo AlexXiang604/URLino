@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>URLINO - Two Widgets with QR Code</title>
+  <!-- Import Monoton Font for the art-deco look -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Monoton&display=swap"
+  />
+  <style>
+    /*=====================================
+      DARK MODE (Default)
+    ======================================*/
+    :root {
+      --bg-color:       #0D1F2D; /* Navy background */
+      --sidebar-bg:     #111;    /* Dark sidebar */
+      --widget-bg:      #111;    /* Dark widget cards */
+      --text-color:     #E1E1E1; /* Off-white text */
+      --primary-color:  #FF00D8; /* Neon pink for main accents */
+      --secondary-color:#00FFF7; /* Neon turquoise for secondary accents */
+    }
+
+    /*=====================================
+      LIGHT MODE Overrides (Banana Theme)
+    ======================================*/
+    body.light-mode {
+      --bg-color:       #FFF9C4; /* Light banana-yellow background */
+      --sidebar-bg:     #FFFDE7; /* Very light banana tone */
+      --widget-bg:      #FFFDE7; /* Very light banana tone for widgets */
+      --text-color:     #2D2D2D; /* Dark grey text */
+      --primary-color:  #FFE135; /* Banana yellow for primary accents */
+      --secondary-color:#AB47BC; /* Complementary purple for secondary accents */
+    }
+
+    /*=============================
+      Global Reset
+    =============================*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /*=============================
+      Body & Container
+    =============================*/
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /*=============================
+      Sidebar
+    =============================*/
+    .sidebar {
+      width: 240px;
+      background-color: var(--sidebar-bg);
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem 1.5rem;
+      transition: background-color 0.4s;
+    }
+
+    /*=============================
+      Logo with Monoton & Flicker
+    =============================*/
+    .sidebar .logo {
+      font-family: "Monoton", cursive;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+      text-shadow: 0 0 10px var(--primary-color),
+        0 0 20px var(--primary-color);
+      animation: neonFlicker 3s infinite;
+    }
+    @keyframes neonFlicker {
+      0% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      2% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      4% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      6% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      8% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      10% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      15% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Navigation Menu */
+    .nav-menu ul {
+      list-style: none;
+    }
+    .nav-menu li {
+      padding: 0.75rem 0;
+      font-size: 1rem;
+      color: var(--secondary-color);
+      transition: color 0.4s;
+    }
+    .nav-menu li a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      transition: color 0.4s;
+    }
+    .nav-menu li a:hover {
+      color: var(--primary-color);
+    }
+    .nav-menu li.active a {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    /* User Profile in Sidebar */
+    .user-profile {
+      margin-top: 2rem;
+      border-top: 1px solid var(--primary-color);
+      padding-top: 1rem;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.4s;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--secondary-color);
+      margin-right: 1rem;
+      transition: background-color 0.4s;
+    }
+    .user-details .name {
+      font-weight: 600;
+      color: var(--primary-color);
+      display: block;
+      transition: color 0.4s;
+    }
+    .user-details .email {
+      font-size: 0.85rem;
+      color: var(--secondary-color);
+      transition: color 0.4s;
+    }
+
+    /*=============================
+      Custom Toggle Switch
+    =============================*/
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+    .theme-toggle-checkbox {
+      display: none; /* Hide the actual checkbox */
+    }
+    .theme-toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background-color: #ccc;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .theme-toggle-switch::before {
+      content: "☀";
+      position: absolute;
+      left: 8px;
+      top: 5px;
+      font-size: 16px;
+      color: #f39c12;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .theme-toggle-switch::after {
+      content: "☾";
+      position: absolute;
+      right: 8px;
+      top: 5px;
+      font-size: 16px;
+      color: #f1c40f;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .theme-toggle-ball {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch {
+      background-color: #2d2d2d;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch::before {
+      opacity: 0; /* Hide sun */
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch::after {
+      opacity: 1; /* Show moon */
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch .theme-toggle-ball {
+      transform: translateX(30px);
+    }
+
+    /*=============================
+      Main Content
+    =============================*/
+    .main-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-color);
+      transition: background-color 0.4s;
+    }
+    .widgets-container {
+      display: flex;
+      gap: 2rem;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+    }
+
+    /* Widget Cards */
+    .widget {
+      background-color: var(--widget-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      flex: 1;
+      max-width: 400px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: background-color 0.4s;
+    }
+    .widget h2 {
+      font-family: "Monoton", cursive;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      color: var(--primary-color);
+      text-shadow: 0 0 5px var(--primary-color);
+      transition: color 0.4s;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      color: var(--secondary-color);
+      transition: color 0.4s;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--secondary-color);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      background-color: #222;
+      color: var(--text-color);
+      transition: border-color 0.4s, background-color 0.4s, color 0.4s;
+    }
+    body.light-mode .form-group input {
+      background-color: var(--sidebar-bg);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 0.7rem 1.2rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--bg-color);
+      margin-right: 0.5rem;
+      box-shadow: 0 0 10px var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      box-shadow: 0 0 20px var(--secondary-color);
+    }
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: var(--bg-color);
+      box-shadow: 0 0 10px var(--secondary-color);
+    }
+    .btn-secondary:hover {
+      background-color: var(--primary-color);
+      box-shadow: 0 0 20px var(--primary-color);
+    }
+
+    /* Result Box */
+    .result {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      background-color: #111;
+      padding: 0.5rem;
+      border-radius: 4px;
+      min-height: 1.5rem;
+      word-wrap: break-word;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    body.light-mode .result {
+      background-color: var(--widget-bg);
+      color: var(--text-color);
+    }
+
+    /* Copy Button Styles */
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      background-color: #28a745; /* Green background */
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      transition: background-color 0.3s;
+    }
+    .copy-btn:hover {
+      background-color: #218838; /* Darker green on hover */
+    }
+    .copy-icon {
+      margin-right: 0.3rem;
+    }
+
+    /*==== For the retrieved Original URL box ====*/
+    .result-label {
+      margin-top: 0.5rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+    .retrieve-box {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+    .retrieve-input {
+      flex: 1;
+      border: 1px solid var(--secondary-color);
+      background-color: #222;
+      color: var(--text-color);
+      border-radius: 4px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.95rem;
+      margin-right: 0.5rem;
+      transition: border-color 0.4s, background-color 0.4s, color 0.4s;
+    }
+    body.light-mode .retrieve-input {
+      background-color: var(--sidebar-bg);
+    }
+
+    /* QR Code container styling */
+    #qrcode {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="logo">URLINO</div>
+        <nav class="nav-menu">
+          <ul>
+            <li class="active"><a href="#">Shorten &amp; Expand</a></li>
+            <li><a href="analytics.html">Analytics Dashboard</a></li>
+            <li><a href="urls_history.html">URLs + History</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar"></div>
+        <div class="user-details">
+          <span class="name">Sam Wheeler</span>
+          <span class="email">samwheeler@example.com</span>
+        </div>
+      </div>
+
+      <!-- Custom Toggle for Light/Dark -->
+      <div class="theme-toggle">
+        <input
+          type="checkbox"
+          id="themeToggleCheckbox"
+          class="theme-toggle-checkbox"
+          checked
+        />
+        <label for="themeToggleCheckbox" class="theme-toggle-switch">
+          <span class="theme-toggle-ball"></span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="widgets-container">
+        <!-- Widget 1: Shorten URL -->
+        <div class="widget">
+          <h2>Shorten URL</h2>
+          <div class="form-group">
+            <label for="longUrlInput">Enter Long URL</label>
+            <input
+              id="longUrlInput"
+              type="text"
+              placeholder="https://www.example.com/very-long-url"
+            />
+          </div>
+          <div class="form-group">
+            <label for="customAliasInput">Enter Alias (optional)</label>
+            <input id="customAliasInput" type="text" placeholder="myCustomAlias" />
+          </div>
+          <button id="generateBtn" class="btn btn-primary">Generate</button>
+          <div id="shortenResult" class="result"></div>
+          <!-- QR Code container -->
+          <div id="qrcode"></div>
+        </div>
+
+        <!-- Widget 2: Retrieve Original URL -->
+        <div class="widget">
+          <h2>Retrieve Original URL</h2>
+          <div class="form-group">
+            <label for="shortUrlInput">Enter Short URL</label>
+            <input
+              id="shortUrlInput"
+              type="text"
+              placeholder="https://short.ly/myAliasOrCode"
+            />
+          </div>
+          <button id="retrieveBtn" class="btn btn-secondary">Retrieve</button>
+          <div id="retrieveResult" class="result"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Include QRCode.js Library from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- External JS File -->
+  <script src="app.js"></script>
+</body>
+</html>

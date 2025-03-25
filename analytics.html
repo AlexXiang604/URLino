@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>URLINO - Analytics Dashboard</title>
+  <!-- Monoton Font (same as future.html) -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Monoton&display=swap"
+  />
+  <style>
+    /*=====================================
+      DARK MODE (Default)
+    ======================================*/
+    :root {
+      --bg-color:       #0D1F2D; /* Navy background */
+      --sidebar-bg:     #111;    /* Dark sidebar */
+      --widget-bg:      #111;    /* Dark widget cards */
+      --text-color:     #E1E1E1; /* Off-white text */
+      --primary-color:  #FF00D8; /* Neon pink for main accents */
+      --secondary-color:#00FFF7; /* Neon turquoise for secondary accents */
+    }
+
+    /*=====================================
+      LIGHT MODE Overrides (Banana Theme)
+    ======================================*/
+    body.light-mode {
+      --bg-color:       #FFF9C4; /* Light banana-yellow background */
+      --sidebar-bg:     #FFFDE7; /* Very light banana tone */
+      --widget-bg:      #FFFDE7; /* Very light banana tone for widgets */
+      --text-color:     #2D2D2D; /* Dark grey text */
+      --primary-color:  #FFE135; /* Banana yellow for primary accents */
+      --secondary-color:#AB47BC; /* Complementary purple for secondary accents */
+    }
+
+    /*=============================
+      Global Reset
+    =============================*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /*=============================
+      Body & Container
+    =============================*/
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      transition: background-color 0.4s, color 0.4s;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /*=============================
+      Sidebar
+    =============================*/
+    .sidebar {
+      width: 240px;
+      background-color: var(--sidebar-bg);
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem 1.5rem;
+      transition: background-color 0.4s;
+    }
+
+    .sidebar .logo {
+      font-family: "Monoton", cursive;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+      text-shadow: 0 0 10px var(--primary-color),
+        0 0 20px var(--primary-color);
+      animation: neonFlicker 3s infinite;
+    }
+    @keyframes neonFlicker {
+      0% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      2% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      4% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      6% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      8% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      10% {
+        opacity: 0;
+        text-shadow: none;
+      }
+      15% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--primary-color),
+          0 0 20px var(--primary-color);
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+    .nav-menu li {
+      padding: 0.75rem 0;
+      font-size: 1rem;
+      color: var(--secondary-color);
+      transition: color 0.4s;
+    }
+    .nav-menu li a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      transition: color 0.4s;
+    }
+    .nav-menu li a:hover {
+      color: var(--primary-color);
+    }
+    .nav-menu li.active a {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .user-profile {
+      margin-top: 2rem;
+      border-top: 1px solid var(--primary-color);
+      padding-top: 1rem;
+      display: flex;
+      align-items: center;
+      transition: border-color 0.4s;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--secondary-color);
+      margin-right: 1rem;
+      transition: background-color 0.4s;
+    }
+    .user-details .name {
+      font-weight: 600;
+      color: var(--primary-color);
+      display: block;
+      transition: color 0.4s;
+    }
+    .user-details .email {
+      font-size: 0.85rem;
+      color: var(--secondary-color);
+      transition: color 0.4s;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+    .theme-toggle-checkbox {
+      display: none; 
+    }
+    .theme-toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background-color: #ccc;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .theme-toggle-switch::before {
+      content: "☀";
+      position: absolute;
+      left: 8px;
+      top: 5px;
+      font-size: 16px;
+      color: #f39c12;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+    .theme-toggle-switch::after {
+      content: "☾";
+      position: absolute;
+      right: 8px;
+      top: 5px;
+      font-size: 16px;
+      color: #f1c40f;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .theme-toggle-ball {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch {
+      background-color: #2d2d2d;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch::before {
+      opacity: 0;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch::after {
+      opacity: 1;
+    }
+    .theme-toggle-checkbox:checked + .theme-toggle-switch .theme-toggle-ball {
+      transform: translateX(30px);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-color);
+      transition: background-color 0.4s;
+    }
+
+    .widgets-container {
+      display: flex;
+      gap: 2rem;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+    }
+    .widget {
+      background-color: var(--widget-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      flex: 1;
+      max-width: 1000px; 
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.4s;
+    }
+    .widget h2 {
+      font-family: "Monoton", cursive;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      color: var(--primary-color);
+      text-shadow: 0 0 5px var(--primary-color);
+      transition: color 0.4s;
+    }
+
+    .analytics-buttons {
+      margin-bottom: 1rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.7rem 1.2rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: var(--bg-color);
+      box-shadow: 0 0 10px var(--primary-color);
+    }
+    .btn-primary:hover {
+      background-color: var(--secondary-color);
+      box-shadow: 0 0 20px var(--secondary-color);
+    }
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: var(--bg-color);
+      box-shadow: 0 0 10px var(--secondary-color);
+    }
+    .btn-secondary:hover {
+      background-color: var(--primary-color);
+      box-shadow: 0 0 20px var(--primary-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    thead {
+      background-color: var(--primary-color);
+      color: var(--bg-color);
+      text-transform: uppercase;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 0.75rem;
+    }
+    td {
+      color: var(--text-color);
+    }
+    body.light-mode td, body.light-mode th {
+      color: var(--text-color);
+    }
+
+    .chart-container {
+      margin: 0 auto;
+      max-width: 700px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="logo">URLINO</div>
+        <nav class="nav-menu">
+          <ul>
+            <li><a href="future.html">Shorten &amp; Expand</a></li>
+            <li class="active"><a href="#">Analytics Dashboard</a></li>
+            <li><a href="urls_history.html">URLs + History</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="settings.html">Settings</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="user-profile">
+        <div class="user-avatar"></div>
+        <div class="user-details">
+          <span class="name">Sam Wheeler</span>
+          <span class="email">samwheeler@example.com</span>
+        </div>
+      </div>
+      <div class="theme-toggle">
+        <input
+          type="checkbox"
+          id="themeToggleCheckbox"
+          class="theme-toggle-checkbox"
+          checked
+        />
+        <label for="themeToggleCheckbox" class="theme-toggle-switch">
+          <span class="theme-toggle-ball"></span>
+        </label>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="widgets-container">
+        <div class="widget">
+          <h2>Analytics Dashboard</h2>
+          <!-- Buttons to refresh the table/chart -->
+          <div class="analytics-buttons">
+            <button id="refreshTableBtn" class="btn btn-primary">Refresh Table</button>
+            <button id="refreshChartBtn" class="btn btn-secondary">Refresh Chart</button>
+          </div>
+
+          <!-- Table to display short link analytics -->
+          <table>
+            <thead>
+              <tr>
+                <th>Short Code</th>
+                <th>Long URL</th>
+                <th>Clicks</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsTableBody">
+              <!-- Rows populated by JS (renderAnalyticsTable) -->
+            </tbody>
+          </table>
+
+          <!-- Container for Chart.js -->
+          <div class="chart-container">
+            <canvas id="clicksChart" width="400" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 1) Include Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- 2) Include your existing app.js -->
+  <script src="app.js"></script>
+
+  <!-- 3) Inline analytics code (optional) -->
+  <script>
+    let clicksChart;
+
+    function renderAnalyticsTable() {
+      const tableBody = document.getElementById("analyticsTableBody");
+      if (!tableBody) return;
+      tableBody.innerHTML = "";
+
+      // Loop over urlDatabase (from app.js)
+      for (const shortCode in urlDatabase) {
+        const record = urlDatabase[shortCode];
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${shortCode}</td>
+          <td>${record.longUrl}</td>
+          <td>${record.clicks}</td>
+          <td>${record.createdAt}</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    }
+
+    function renderClicksChart() {
+      const ctx = document.getElementById("clicksChart").getContext("2d");
+
+      const labels = [];
+      const data = [];
+      for (const shortCode in urlDatabase) {
+        labels.push(shortCode);
+        data.push(urlDatabase[shortCode].clicks);
+      }
+
+      if (clicksChart) {
+        clicksChart.destroy();
+      }
+
+      clicksChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "# of Clicks",
+              data
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        },
+      });
+    }
+
+    // Refresh buttons
+    document.getElementById("refreshTableBtn").addEventListener("click", renderAnalyticsTable);
+    document.getElementById("refreshChartBtn").addEventListener("click", renderClicksChart);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderAnalyticsTable();
+      renderClicksChart();
+    });
+  </script>
+</body>
+</html>
