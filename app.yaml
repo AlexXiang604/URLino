@@ -1,0 +1,6 @@
+runtime: java17
+entrypoint: java -jar target/URLino-0.0.1-SNAPSHOT.jar
+service: urlino-backend
+service_account: sp25-comp539-team4-urlino@rice-comp-539-spring-2022.iam.gserviceaccount.com
+env_variables:
+  GOOGLE_APPLICATION_CREDENTIALS: team4-service-account-key.json
