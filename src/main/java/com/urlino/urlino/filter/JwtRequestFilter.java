@@ -76,44 +76,103 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired private UserDetailsServiceImpl userDetailsService;
 
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+//            throws ServletException, IOException {
+//
+//        String path = request.getRequestURI();
+//
+//        System.out.println("Request path: " + request.getRequestURI());
+//
+//        // 放行 OPTIONS 请求
+//        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
+//
+//        // 登录和注册请求不做 token 校验，直接放行
+//        if (path.equals("/account/login") || path.equals("/account/register")) {
+//            System.out.println(" 放行 path：" + path);
+//            chain.doFilter(request, response);
+//            return;
+//        }
+//
+//        final String authHeader = request.getHeader("Authorization");
+//        System.out.println("🪪 Authorization Header: " + authHeader);
+//        String jwt = null;
+//        String userId = null;
+//
+//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//            jwt = authHeader.substring(7);
+//            userId = jwtUtil.extractUserId(jwt);
+//            System.out.println(" Extracted userId: " + userId);
+//        }
+//
+//        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+//
+//            if (jwtUtil.validateToken(jwt, userId)) {
+//                UsernamePasswordAuthenticationToken authToken =
+//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                SecurityContextHolder.getContext().setAuthentication(authToken);
+//            }
+//            else {
+//                System.out.println("Token 校验失败！");
+//            }
+//        }
+//
+//        chain.doFilter(request, response);
+//    }
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-
-        System.out.println("Request path: " + request.getRequestURI());
-
-
-        // 登录和注册请求不做 token 校验，直接放行
-        if (path.equals("/account/login") || path.equals("/account/register")) {
-            System.out.println(" 放行 path：" + path);
+        // 放行 OPTIONS 请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             chain.doFilter(request, response);
             return;
         }
 
+        // 放行登录和注册
+        String path = request.getRequestURI();
+        if (path.equals("/account/login") || path.equals("/account/register")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // 提取令牌
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("🪪 Authorization Header: " + authHeader);
         String jwt = null;
         String userId = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
-            userId = jwtUtil.extractUserId(jwt);
-            System.out.println(" Extracted userId: " + userId);
-        }
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                jwt = authHeader.substring(7);
+                userId = jwtUtil.extractUserId(jwt);
 
-        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-
-            if (jwtUtil.validateToken(jwt, userId)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+                    if (jwtUtil.validateToken(jwt, userId)) {
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    } else {
+                        throw new ServletException("Invalid token");
+                    }
+                } else {
+                    throw new ServletException("Missing or invalid Authorization header");
+                }
+            } else {
+                throw new ServletException("Authorization header must start with 'Bearer '");
             }
-            else {
-                System.out.println("Token 校验失败！");
-            }
+        } catch (Exception e) {
+            // 设置 CORS 头并返回 401
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8000");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            return;
         }
 
         chain.doFilter(request, response);

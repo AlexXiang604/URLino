@@ -14,14 +14,14 @@ import java.util.List;
 public class UserRepository {
     private BigtableDataClient dataClient;
 
-    private static final String PROJECT_ID = "test-project";
-    private static final String INSTANCE_ID = "test-instance";
-    private static final String TABLE_NAME = "users";
+    private static final String PROJECT_ID = "rice-comp-539-spring-2022";
+    private static final String INSTANCE_ID = "comp-539-bigtable";
+    private static final String TABLE_NAME = "URLino_users";
     private static final String COLUMN_FAMILY_INFO = "info";
     private static final String COLUMN_FAMILY_METADATA = "metadata";
 
     public UserRepository() throws Exception {
-        BigtableDataSettings settings = BigtableDataSettings.newBuilderForEmulator(8086) // 使用本地 Emulator，端口 8086
+        BigtableDataSettings settings = BigtableDataSettings.newBuilder() // 使用本地 Emulator，端口 8086
                 .setProjectId(PROJECT_ID)
                 .setInstanceId(INSTANCE_ID)
                 .build();

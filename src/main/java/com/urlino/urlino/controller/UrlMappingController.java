@@ -5,6 +5,8 @@ import com.urlino.urlino.entity.UrlMappingEntity;
 import com.urlino.urlino.service.UrlMappingService;
 import com.urlino.urlino.service.UserService;
 import com.urlino.urlino.util.JwtUtil;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.bind.annotation.RequestBody;
@@ -12,11 +14,19 @@ import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Optional;
 
 
 @RequestMapping("/service")
+//@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(
+        origins = "http://localhost:8000",
+        allowedHeaders = {"Authorization", "Content-Type"},
+        methods = {RequestMethod.POST, RequestMethod.OPTIONS}
+)
 @RestController
 public class UrlMappingController {
 
@@ -45,6 +55,30 @@ public class UrlMappingController {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{short_url}")
+    public ResponseEntity<?> redirect(@PathVariable String short_url) throws URISyntaxException {
+        try {
+            String longUrl = urlMappingService.retrieveLongUrl(short_url);
+            URI origin = new URI(longUrl);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(origin);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+
+    }
+
+//    @GetMapping("/{shortUrl}")
+//    public String redirectToLongUrl(@PathVariable String shortUrl) {
+//        String longUrl = urlMappingService.retrieveLongUrl(shortUrl);
+//        if (longUrl != null) {
+//            return "redirect:" + longUrl;
+//        }
+//        // Optionally, handle the case where no mapping is found.
+//        return "error";  // return an error view or redirect to a not-found page
+//    } RedirectView("/error");
 
 
 //    // Widget 1: 生成短链接口

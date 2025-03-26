@@ -17,15 +17,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class UrlMappingRepository {
-    private static final String PROJECT_ID = "test-project";
-    private static final String INSTANCE_ID = "test-instance";
-    private static final String TABLE_NAME = "url_mapping";
+    private static final String PROJECT_ID = "rice-comp-539-spring-2022";
+    private static final String INSTANCE_ID = "comp-539-bigtable";
+
+    private static final String TABLE_NAME = "URLino_url_mapping";
 
     private BigtableDataClient dataClient;
 
     public UrlMappingRepository() throws Exception {
 //        dataClient = BigtableDataClient.create(PROJECT_ID, INSTANCE_ID);
-        BigtableDataSettings settings = BigtableDataSettings.newBuilderForEmulator(8086) // 使用本地 Emulator，端口 8086
+//        BigtableDataSettings settings = BigtableDataSettings.newBuilderForEmulator(8086) // 使用本地 Emulator，端口 8086
+        BigtableDataSettings settings = BigtableDataSettings.newBuilder()
                 .setProjectId(PROJECT_ID)
                 .setInstanceId(INSTANCE_ID)
                 .build();
