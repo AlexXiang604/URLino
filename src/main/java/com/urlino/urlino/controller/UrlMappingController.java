@@ -23,9 +23,9 @@ import java.util.Optional;
 @RequestMapping("/service")
 //@CrossOrigin(origins = "http://localhost:8000")
 @CrossOrigin(
-        origins = "http://localhost:8000",
+        origins = "https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/",
         allowedHeaders = {"Authorization", "Content-Type"},
-        methods = {RequestMethod.POST, RequestMethod.OPTIONS}
+        methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.OPTIONS}
 )
 @RestController
 public class UrlMappingController {

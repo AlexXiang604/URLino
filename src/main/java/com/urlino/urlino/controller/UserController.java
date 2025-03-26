@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = "http://localhost:8000")
+@CrossOrigin(origins = "https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/")
 public class UserController {
     @Autowired
     private UserService userService;

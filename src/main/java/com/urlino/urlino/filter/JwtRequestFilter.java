@@ -169,7 +169,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             // 设置 CORS 头并返回 401
-            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8000");
+            response.setHeader("Access-Control-Allow-Origin", "https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
             return;
