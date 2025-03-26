@@ -56,7 +56,7 @@ public class UrlMappingController {
         }
     }
 
-    @GetMapping("/{short_url}")
+    @GetMapping("/redirect/{short_url}")
     public ResponseEntity<?> redirect(@PathVariable String short_url) throws URISyntaxException {
         try {
             String longUrl = urlMappingService.retrieveLongUrl(short_url);

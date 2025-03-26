@@ -65,7 +65,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 关键！
-                        .requestMatchers("/account/login", "/account/register").permitAll()
+                        .requestMatchers("/account/login", "/account/register", "/service/redirect", "/service/redirect/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
