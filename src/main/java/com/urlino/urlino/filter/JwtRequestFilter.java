@@ -137,10 +137,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // 放行登录和注册
         String path = request.getRequestURI();
-        if (path.equals("/account/login") || path.equals("/account/register") || path.startsWith("/service/redirect")) {
+        if (path.equals("/account/login") || path.equals("/account/register")) {
             chain.doFilter(request, response);
             return;
         }
+
+        //放行短链重定向
+        if (request.getMethod().equals("GET") && path.matches("^/[a-zA-Z0-9]+$")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
 
         // 提取令牌
         final String authHeader = request.getHeader("Authorization");
