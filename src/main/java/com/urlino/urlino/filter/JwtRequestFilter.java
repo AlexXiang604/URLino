@@ -142,6 +142,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
 
+        //放行短链重定向
+        if (request.getMethod().equals("GET") && path.matches("^/[a-zA-Z0-9]+$")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+
         // 提取令牌
         final String authHeader = request.getHeader("Authorization");
         String jwt = null;

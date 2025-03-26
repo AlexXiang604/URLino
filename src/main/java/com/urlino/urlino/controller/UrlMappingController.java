@@ -56,30 +56,6 @@ public class UrlMappingController {
         }
     }
 
-    @GetMapping("/{short_url}")
-    public ResponseEntity<?> redirect(@PathVariable String short_url) throws URISyntaxException {
-        try {
-            String longUrl = urlMappingService.retrieveLongUrl(short_url);
-            URI origin = new URI(longUrl);
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setLocation(origin);
-            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-        }
-
-    }
-
-//    @GetMapping("/{shortUrl}")
-//    public String redirectToLongUrl(@PathVariable String shortUrl) {
-//        String longUrl = urlMappingService.retrieveLongUrl(shortUrl);
-//        if (longUrl != null) {
-//            return "redirect:" + longUrl;
-//        }
-//        // Optionally, handle the case where no mapping is found.
-//        return "error";  // return an error view or redirect to a not-found page
-//    } RedirectView("/error");
-
 
 //    // Widget 1: 生成短链接口
 //    // 参数：userId, longUrl, 可选 alias

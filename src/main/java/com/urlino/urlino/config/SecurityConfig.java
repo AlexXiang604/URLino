@@ -67,6 +67,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 关键！
                         .requestMatchers("/account/login", "/account/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/{shortUrl:[a-zA-Z0-9]+}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
