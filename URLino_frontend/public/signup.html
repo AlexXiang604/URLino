@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon-Themed Sign Up</title>
+  <style>
+    /* Reset and basic styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: #fff;
+    }
+    /* Full-page background image */
+    body {
+      background: url("neon.jpg") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Form container with semi-transparent overlay */
+    .auth-container {
+      width: 350px;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+    .form-group input:focus {
+      outline: 2px solid #ff00d8;
+    }
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #ff00d8;
+      color: #000;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      box-shadow: 0 0 10px #ff00d8;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    button:hover {
+      background-color: #00fff7;
+      box-shadow: 0 0 15px #00fff7;
+    }
+    p {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+    p a {
+      color: #ff00d8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    p a:hover {
+      text-decoration: underline;
+      color: #00fff7;
+    }
+    .message {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" placeholder="Enter your email" required />
+      </div>
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="signupUsername">Username</label>
+        <input type="text" id="signupUsername" placeholder="Enter your username" required />
+      </div>
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" placeholder="Enter your password" required />
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <div id="signupMessage" class="message"></div>
+  </div>
+
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const signupMessage = document.getElementById('signupMessage');
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('signupEmail').value.trim();
+      const username = document.getElementById('signupUsername').value.trim();
+      const password = document.getElementById('signupPassword').value.trim();
+
+      if (!email || !username || !password) {
+        signupMessage.style.color = 'red';
+        signupMessage.textContent = 'Please enter an email, username, and password.';
+        return;
+      }
+
+      try {
+        // Use the current origin to build the absolute URL
+        const BASE_URL = 'https://urlino-backend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/account'
+        const response = await fetch(`${BASE_URL}/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, username, password })
+        });
+
+        if (response.ok) {
+          const msg = await response.text();
+          signupMessage.style.color = 'lightgreen';
+          signupMessage.textContent = msg;
+          signupForm.reset();
+
+          window.location.href = 'future.html';
+        } else {
+          const errorText = await response.text();
+          signupMessage.style.color = 'red';
+          signupMessage.textContent = errorText || 'Error registering user.';
+        }
+      } catch (error) {
+        console.error(error);
+        signupMessage.style.color = 'red';
+        signupMessage.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

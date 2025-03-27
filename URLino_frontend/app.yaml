@@ -1,0 +1,15 @@
+service: urlino-frontend   # <- 你想给前端取的服务名称
+runtime: nodejs18 # 或者其他支持的 runtime (见下文说明)
+service_account: sp25-comp539-team4-urlino@rice-comp-539-spring-2022.iam.gserviceaccount.com
+env_variables:
+  GOOGLE_APPLICATION_CREDENTIALS: team4-service-account-key.json
+
+
+# handlers:
+#   - url: /
+#     static_files: future.html
+#     upload: future.html
+
+#   - url: /(.*)
+#     static_files: \1
+#     upload: (.*)
