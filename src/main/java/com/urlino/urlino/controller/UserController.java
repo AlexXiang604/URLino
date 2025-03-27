@@ -70,8 +70,6 @@ public class UserController {
         return userId;
     }
 
-
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO loginRequest) {
         // 通过邮箱和密码查找用户

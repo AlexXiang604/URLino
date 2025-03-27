@@ -12,6 +12,7 @@
 # below:
 .git
 .gitignore
+.idea/
 
 # Target directory for maven builds
 target/

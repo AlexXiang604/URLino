@@ -114,7 +114,7 @@ public class UrlMappingController {
                     request.getLongUrl(),
                     Optional.ofNullable(request.getAlias())
             );
-            return ResponseEntity.ok("https://urlino.com/" + shortUrl);
+            return ResponseEntity.ok("https://urlino-backend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/" + shortUrl);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
