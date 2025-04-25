@@ -17,13 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.*;
 
 
 @RequestMapping("/service")
 //@CrossOrigin(origins = "http://localhost:8000")
 @CrossOrigin(
         origins = "https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/",
+        //origins = "http://localhost:8000/",
         allowedHeaders = {"Authorization", "Content-Type"},
         methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.OPTIONS}
 )
@@ -46,13 +47,18 @@ public class UrlMappingController {
     public ResponseEntity<?> retrieveLongUrl(@PathVariable String shortUrl) {
         try {
             String longUrl = urlMappingService.retrieveLongUrl(shortUrl);
-            if (longUrl != null) {
-                return ResponseEntity.ok(longUrl);
-            } else {
-                return ResponseEntity.status(404).body("Mapping not found");
+            if (longUrl == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Short URL not found");
             }
+            if (longUrl.equals("URL_EXPIRED")) {
+                return ResponseEntity.status(HttpStatus.GONE)
+                        .body("This URL has expired");
+            }
+            return ResponseEntity.ok(longUrl);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error retrieving URL: " + e.getMessage());
         }
     }
 
@@ -108,13 +114,27 @@ public class UrlMappingController {
         try {
             String token = authHeader.replace("Bearer ", "");
             String userId = jwtUtil.extractUserId(token);
+            if (!userService.isPremiumUser(userId)) {
+                String shortUrl = urlMappingService.createMapping(
+                        userId,
+                        request.getLongUrl(),
+                        Optional.ofNullable(request.getAlias())
+                );
+                //return ResponseEntity.ok("http://localhost:8080/" + shortUrl);
+                return ResponseEntity.ok("https://urlino-backend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/" + shortUrl);
 
-            String shortUrl = urlMappingService.createMapping(
-                    userId,
-                    request.getLongUrl(),
-                    Optional.ofNullable(request.getAlias())
-            );
-            return ResponseEntity.ok("https://urlino-backend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/" + shortUrl);
+            }
+            else{
+                String shortUrl = urlMappingService.editShortUrl(
+                        userId,
+                        request.getLongUrl(),
+                        Optional.ofNullable(request.getAlias())
+                );
+                //return ResponseEntity.ok("http://localhost:8080/" + shortUrl);
+                return ResponseEntity.ok("https://urlino-backend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/" + shortUrl);
+
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
@@ -148,34 +168,48 @@ public class UrlMappingController {
         }
     }
 
-//    @PostMapping("/shorten")
-//    public ResponseEntity<?> shortenUrl(@RequestBody UrlMappingEntity request) {
-//        try {
-//            UrlMappingEntity mapping = service.createMapping(request.getLongUrl());
-//            return ResponseEntity.ok(mapping);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-//        }
-//    }
 
+    @GetMapping("/mappings")
+    public ResponseEntity<?> getUserMappings(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        try {
+            // 从请求头中提取 token，并解析出 userId
+            String token = authHeader.replace("Bearer ", "");
+            String userId = jwtUtil.extractUserId(token);
 
+            // 通过业务层接口获取当前用户的所有 URL mapping 记录
+            List<UrlMappingDTO> mappings = urlMappingService.getUserMappings(userId);
 
+            // 将 UrlMappingEntity 转换为 List<Map<String, Object>> 格式，便于前端解析
+            List<Map<String, Object>> mappingList = new ArrayList<>();
+            for (UrlMappingDTO mapping : mappings) {
+                Map<String, Object> mappingMap = new HashMap<>();
+                mappingMap.put("shortUrl", mapping.getShortUrl());
+                mappingMap.put("longUrl", mapping.getLongUrl());
+//                mappingMap.put("userId", mapping.getUserId());
+//                mappingMap.put("createTime", mapping.getCreateTime());
+                mappingMap.put("createTime", mapping.getCreateTimeFormatted());
+                mappingMap.put("clickCount", mapping.getClickCount());
+//                mappingMap.put("expireAt", mapping.getExpireAt());
+                mappingMap.put("expireAt", mapping.getDaysUntilExpiry());
+                mappingList.add(mappingMap);
+            }
 
-//    // Widget 2: 查询长链接口
-//    // 参数：userId, shortUrl
-//    @GetMapping("/retrieve")
-//    public ResponseEntity<?> retrieveLongUrl(@RequestParam String userId,
-//                                             @RequestParam String shortUrl) {
-//        try {
-//            String longUrl = urlMappingService.retrieveLongUrl(userId, shortUrl);
-//            if (longUrl != null) {
-//                return ResponseEntity.ok(longUrl);
-//            } else {
-//                return ResponseEntity.status(404).body("Mapping not found");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body("Error: " + e.getMessage());
-//        }
-//    }
+            // 构造返回的响应 Map，格式上和 login 接口类似
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Mappings retrieved successfully");
+            response.put("mappings", mappingList);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 出现异常时，构造错误返回信息
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Failed to retrieve mappings");
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
 
 }

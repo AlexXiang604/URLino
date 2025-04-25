@@ -84,7 +84,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/")); // 允许的前端域名
-        config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
+        //config.setAllowedOrigins(List.of("http://localhost:8000/")); // 允许的前端域名
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true); // 允许携带凭证
 

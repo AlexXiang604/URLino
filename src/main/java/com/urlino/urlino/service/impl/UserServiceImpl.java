@@ -68,5 +68,29 @@ public class UserServiceImpl implements UserService { //实现接口
     }
 
 
+    @Override
+    public boolean upgradeToPremium(String userId) {
+        try {
+            // 通过 userId 查询用户，使用 Optional 来避免 null 问题
+            UserEntity user = userRepository.findById(userId);
+            if (user == null) {
+                // 用户不存在，返回 false 表示升级失败
+                return false;
+            }
+
+            // 将 premium 状态置为 true，并更新更新时间
+            user.setPremium(true);
+            user.setUpdatedAt(System.currentTimeMillis());
+
+            // 保存更新后的用户数据到数据库
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            // 此处可以记录异常日志
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

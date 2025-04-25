@@ -157,7 +157,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 jwt = authHeader.substring(7);
+                // 打印用户 token 到控制台
+                System.out.println("用户 token: " + jwt);
                 userId = jwtUtil.extractUserId(jwt);
+                System.out.println("提取的 userId: " + userId);
 
                 if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
@@ -177,6 +180,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // 设置 CORS 头并返回 401
             response.setHeader("Access-Control-Allow-Origin", "https://urlino-frontend-dot-rice-comp-539-spring-2022.uk.r.appspot.com/");
+            //response.setHeader("Access-Control-Allow-Origin", "http://localhost:8000/");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
             return;

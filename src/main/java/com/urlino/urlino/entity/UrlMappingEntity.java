@@ -2,9 +2,9 @@ package com.urlino.urlino.entity;
 
 import java.util.Date;
 
-
 public class UrlMappingEntity {
     // 行键：全局唯一的短链 (例如 "abc12345")
+    //    private String 的短链 (例如 "abc12345")
     private String shortUrl;
     // 对应的长链接
     private String longUrl;
@@ -15,15 +15,19 @@ public class UrlMappingEntity {
     // 点击次数
     private int clickCount;
 
+    private Date expireAt;  // 过期时间字段
+
     public UrlMappingEntity() {
     }
 
-    public UrlMappingEntity(String shortUrl, String longUrl, String userId) {
+    public UrlMappingEntity(String shortUrl, String longUrl, String userId, Date expireAt) {
         this.shortUrl = shortUrl;
         this.longUrl = longUrl;
         this.userId = userId;
         this.createTime = new Date();
         this.clickCount = 0;
+        // 设置默认过期时间为创建时间后1分钟
+        this.expireAt = expireAt;
     }
 
     // Getters and Setters
@@ -58,7 +62,14 @@ public class UrlMappingEntity {
     public void setClickCount(int clickCount) {
         this.clickCount = clickCount;
     }
+    public Date getExpireAt() {
+        return expireAt;
+    }
+    public void setExpireAt(Date expireAt) {
+        this.expireAt = expireAt;
+    }
 }
+
 //public class UrlMappingEntity {
 //
 //    // 用户ID和短链组合构成唯一标识，例如 "user123#abc123"

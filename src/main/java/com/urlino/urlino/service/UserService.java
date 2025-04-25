@@ -23,6 +23,8 @@ public interface UserService {
     UserEntity findByEmailAndPassword(String email, String passwordHash); // 新增方法
     UserEntity findById(String userId); // 新增方法
     boolean emailExists(String email);
+
+    boolean upgradeToPremium(String userId);
 }
 
 
